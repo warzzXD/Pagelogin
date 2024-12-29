@@ -1,0 +1,144 @@
+<html>
+<head>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        @keyframes typing {
+            0% { width: 0; }
+            50% { width: 100%; }
+            100% { width: 0; }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: blue; }
+        }
+        @keyframes borderColorChange {
+            0% { border-color: red; }
+            25% { border-color: blue; }
+            50% { border-color: green; }
+            75% { border-color: yellow; }
+            100% { border-color: red; }
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .video-bg {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            color: red;
+            z-index: 1;
+        }
+        .container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-style: italic;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 3px solid white;
+            width: 0;
+            animation: typing 4s steps(40, end) infinite, blink-caret .75s step-end infinite;
+            animation-delay: 3s;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        .input-container input {
+            width: 300px;
+            padding: 10px;
+            border: 2px solid;
+            border-radius: 5px;
+            font-size: 16px;
+            animation: borderColorChange 4s linear infinite;
+        }
+        .button {
+            background-color: #1E3A8A;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .button:disabled {
+            background-color: grey;
+            cursor: not-allowed;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <video autoplay muted loop class="video-bg">
+        <source src="bg.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <div class="container">
+        <h1>Masukan username & password</h1>
+        <div class="input-container">
+            <input type="text" id="username" placeholder="Masukan username....">
+        </div>
+        <div class="input-container">
+            <input type="password" id="password" placeholder="Masukan password....">
+        </div>
+        <button class="button" id="loginButton" onclick="validate()">Masuk</button>
+        <div id="error-message" class="error"></div>
+    </div>
+
+    <audio id="error-audio" src="mus.mp3" preload="auto"></audio>
+
+    <script>
+        let lockoutTimer;
+
+        function validate() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            const loginButton = document.getElementById('loginButton');
+            const errorAudio = document.getElementById('error-audio');
+
+            if (username === 'admin' && password === '111') {
+                window.location.href = 'https://bahan-g-a.vercel.app/'; // Replace with your desired URL
+            } else {
+                errorMessage.textContent = 'Username atau password salah';
+                errorAudio.play();
+                lockout(loginButton);
+            }
+        }
+
+        function lockout(button) {
+            button.disabled = true;
+            let timeLeft = 10;
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = `Terlalu banyak percobaan. Tunggu ${timeLeft} detik.`;
+
+            lockoutTimer = setInterval(() => {
+                timeLeft--;
+                errorMessage.textContent = `Terlalu banyak percobaan. Tunggu ${timeLeft} detik.`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(lockoutTimer);
+                    button.disabled = false;
+                    errorMessage.textContent = '';
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
